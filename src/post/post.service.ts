@@ -2,6 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { CreatePostDto } from './dto/create-post.dto';
+import { UpdatePostDto } from './dto/update-post.dto';
 import { Post, PostDocument } from './post.schema';
 
 @Injectable()
@@ -22,5 +23,25 @@ export class PostService {
     }
 
     return post;
+  }
+
+  async updatePost(id: string, updatePostDto: UpdatePostDto): Promise<Post> {
+    const post = await this.postModel.findById(id).exec();
+    const { title, content, category } = updatePostDto;
+
+    if (title) {
+      post.title = title;
+    }
+
+    if (content) {
+      post.content = content;
+    }
+
+    if (category) {
+      post.category = category;
+    }
+
+    post.updated_at = new Date();
+    return await post.save();
   }
 }
