@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Query } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { User } from 'src/auth/user.schema';
 import { GetUser } from '../auth/get-user.decorator';
@@ -19,6 +19,15 @@ export class CommentController {
   @Get(':id')
   findById(@Param('id') id: string) {
     return this.commentService.findById(id);
+  }
+
+  @Get()
+  findByPostId(
+    @Query('postId') postId: string,
+    @Query('limit') limit: string,
+    @Query('offset') offset: string,
+  ) {
+    return this.commentService.findByPostId(postId, +limit, +offset);
   }
 
   @Patch(':id')
