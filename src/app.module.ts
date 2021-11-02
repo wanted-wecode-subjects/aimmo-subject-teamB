@@ -8,7 +8,7 @@ import { PostModule } from './post/post.module';
 
 @Module({
   imports: [
-    MongooseModule.forRoot('mongodb://localhost/aimmo'),
+    MongooseModule.forRoot('mongodb+srv://new_user:new_password@cluster0.iop52.mongodb.net/myFirstDatabase?retryWrites=true&w=majority'),
     AuthModule,
     CommentModule,
     PostModule,
