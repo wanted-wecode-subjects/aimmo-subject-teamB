@@ -17,11 +17,11 @@ import { Post as Forum } from './post.schema';
 import { PostService } from './post.service';
 
 @Controller('posts')
+@UseGuards(AuthGuard())
 export class PostController {
   constructor(private postService: PostService) {}
 
   @Post()
-  @UseGuards(AuthGuard())
   createPost(
     @Body() createPostDto: CreatePostDto,
     @GetUser() user: User,
@@ -35,7 +35,6 @@ export class PostController {
   }
 
   @Patch('/:id')
-  @UseGuards(AuthGuard())
   updatePost(
     @Param('id') id: string,
     @Body() updatePostDto: UpdatePostDto,
@@ -45,7 +44,6 @@ export class PostController {
   }
 
   @Delete('/:id')
-  @UseGuards(AuthGuard())
   deletePost(
     @Param('id') id: string,
     @GetUser() user: User,
