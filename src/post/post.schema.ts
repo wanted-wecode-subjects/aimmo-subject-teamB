@@ -20,7 +20,7 @@ export class Post {
   category: PostCategories;
 
   @Prop()
-  count: number;
+  read_count: number;
 
   @Prop()
   read_user: string[];

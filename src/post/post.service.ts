@@ -19,7 +19,7 @@ export class PostService {
     createdPost.author = user.username;
     createdPost.created_at = new Date();
     createdPost.updated_at = new Date();
-    createdPost.count = 1;
+    createdPost.read_count = 1;
     createdPost.user = user;
     createdPost.read_user.push(user.username);
 
