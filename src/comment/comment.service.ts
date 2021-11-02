@@ -26,6 +26,7 @@ export class CommentService {
       postId,
       author: user.username,
       comments: [],
+      parentCommentId,
       created_at: new Date(),
       updated_at: new Date(),
     });
@@ -53,6 +54,17 @@ export class CommentService {
     return existedComment;
   }
 
+  async findByParentCommentId(parentCommentId: string, limit: number, offset: number) {
+    limit = isNaN(limit) ? 10: limit;
+    offset = isNaN(offset) ? 0 : offset;
+    const comments = await this.commentModel
+      .find({ parentCommentId, depth: 1 })
+      .skip(offset)
+      .limit(limit)
+      .sort({'created_at': 1});
+    return {count: comments.length, comments};
+  }
+
   async findByPostId(postId: string, limit: number, offset: number) {
     limit = isNaN(limit) ? 10: limit;
     offset = isNaN(offset) ? 0 : offset;
@@ -60,7 +72,7 @@ export class CommentService {
       .find({ postId, depth: 0 })
       .skip(offset)
       .limit(limit)
-      .sort({'created_at': 0});
+      .sort({'created_at': 1});
     return {count: comments.length, comments};
   }
 

@@ -14,6 +14,9 @@ export class Comment {
   @Prop()
   depth: number;
 
+  @Prop()
+  parentCommentId: string;
+
   @Prop({type: [{type: mongoose.Schema.Types.ObjectId, ref: 'Comment'}]})
   comments: Comment[] | null;
 
