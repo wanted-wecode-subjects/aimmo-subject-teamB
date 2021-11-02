@@ -1,5 +1,13 @@
 # 프리온보딩 1주차 AIMMO사 과제
 
+## 팀 소개
+
+- 팀 이름: 빼뺴로 (11조)
+- 팀원:
+  - 이기범
+  - 임유라
+  - 심영학
+
 ## 개발 요구사항
 
 - 원티드 지원 과제 내용 포함
@@ -20,9 +28,10 @@
 - 데이터베이스: MongoDB
 - 라이브러리:
   - Passport
+  - Mongoose
   - bcrypt
-  - TypeORM
   - class-validator
+  - class-transformer
 
 ## API Endpoint
 ### User(유저)
