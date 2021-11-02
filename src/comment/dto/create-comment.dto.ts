@@ -1,4 +1,4 @@
-import { IsNumber, IsString, Max, Min } from "class-validator";
+import { IsNumber, IsOptional, IsString, Max, Min } from "class-validator";
 
 export class CreateCommentDto {
   @IsString()
@@ -11,4 +11,8 @@ export class CreateCommentDto {
 
   @IsString()
   postId: string;
+
+  @IsString()
+  @IsOptional()
+  parentCommentId: string;
 }

@@ -11,13 +11,31 @@ export class CommentService {
   constructor(@InjectModel(Comment.name) private commentModel: Model<CommentDocument>) {}
 
   async create(createCommentDto: CreateCommentDto, user: User) {
+    const { content, depth, postId, parentCommentId } = createCommentDto;
+
+    // depth check
+    if (parentCommentId && depth === 0) {
+      throw new BadRequestException('child comment depth is wrong');
+    } else if (!parentCommentId && depth === 1) {
+      throw new BadRequestException('comment depth is wrong');
+    }
+
     const createdComment = new this.commentModel({
-      ...createCommentDto,
+      content,
+      depth,
+      postId,
       author: user.username,
       comments: [],
       created_at: new Date(),
       updated_at: new Date(),
     });
+
+    // 추가하는 댓글이 대댓글인 경우 부모 댓글의 comments에 추가
+    if (parentCommentId) {
+      const parentComment = await this.findById(parentCommentId);
+      parentComment.comments.push(createdComment);
+      await parentComment.save();
+    }
     return await createdComment.save();
   }
 
