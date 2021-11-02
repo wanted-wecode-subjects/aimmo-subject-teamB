@@ -1,7 +1,14 @@
-import { Controller } from '@nestjs/common';
+import { Body, Controller, Post } from '@nestjs/common';
+import { CreatePostDto } from './dto/create-post.dto';
+import { Post as Forum } from './post.schema';
 import { PostService } from './post.service';
 
-@Controller('post')
+@Controller('posts')
 export class PostController {
   constructor(private postService: PostService) {}
+
+  @Post()
+  createPost(@Body() createPostDto: CreatePostDto): Promise<Forum> {
+    return this.postService.createPost(createPostDto);
+  }
 }
