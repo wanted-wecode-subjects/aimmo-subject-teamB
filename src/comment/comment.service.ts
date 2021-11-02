@@ -33,6 +33,12 @@ export class CommentService {
     // 추가하는 댓글이 대댓글인 경우 부모 댓글의 comments에 추가
     if (parentCommentId) {
       const parentComment = await this.findById(parentCommentId);
+
+      if (parentComment.depth === 1) {
+        // 대댓글에 대댓글을 달려는 경우
+        throw new BadRequestException('cannot create comment on child comment');
+      }
+
       parentComment.comments.push(createdComment);
       await parentComment.save();
     }
