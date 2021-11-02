@@ -6,12 +6,14 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { GetUser } from '../auth/get-user.decorator';
 import { User } from '../auth/user.schema';
 import { CreatePostDto } from './dto/create-post.dto';
+import { GetPostsFilterDto } from './dto/get-posts-filter.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { Post as Forum } from './post.schema';
 import { PostService } from './post.service';
@@ -27,6 +29,13 @@ export class PostController {
     @GetUser() user: User,
   ): Promise<Forum> {
     return this.postService.createPost(createPostDto, user);
+  }
+
+  @Get()
+  getPosts(
+    @Query() filterDto: GetPostsFilterDto,
+  ): Promise<{ count: number; data: Forum[] }> {
+    return this.postService.getPosts(filterDto);
   }
 
   @Get('/:id')
