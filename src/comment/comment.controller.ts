@@ -30,15 +30,6 @@ export class CommentController {
     return this.commentService.findByParentCommentId(parentCommentId, +limit, +offset);
   }
 
-  @Get()
-  findByPostId(
-    @Query('postId') postId: string,
-    @Query('limit') limit: string,
-    @Query('offset') offset: string,
-  ) {
-    return this.commentService.findByPostId(postId, +limit, +offset);
-  }
-
   @Patch(':id')
   update(
     @Param('id') id: string,
