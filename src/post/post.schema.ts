@@ -18,6 +18,12 @@ export class Post {
   category: string;
 
   @Prop()
+  count: number;
+
+  @Prop()
+  read_user: string[];
+
+  @Prop()
   created_at: Date;
 
   @Prop()
