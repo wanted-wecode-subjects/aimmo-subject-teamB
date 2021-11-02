@@ -30,8 +30,8 @@ export class PostController {
   }
 
   @Get('/:id')
-  getPostById(@Param('id') id: string): Promise<Forum> {
-    return this.postService.getPostById(id);
+  getPostById(@Param('id') id: string, @GetUser() user: User): Promise<Forum> {
+    return this.postService.getPostById(id, user);
   }
 
   @Patch('/:id')
