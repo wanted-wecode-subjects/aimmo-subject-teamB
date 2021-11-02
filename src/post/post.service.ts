@@ -44,4 +44,15 @@ export class PostService {
     post.updated_at = new Date();
     return await post.save();
   }
+
+  async deletePost(id: string): Promise<{ message: string }> {
+    const result = await this.postModel.deleteOne({ _id: id });
+    console.log(result);
+
+    if (result.deletedCount === 0) {
+      throw new NotFoundException(`Post with ID "${id}" not found`);
+    }
+
+    return { message: 'Post deleted' };
+  }
 }

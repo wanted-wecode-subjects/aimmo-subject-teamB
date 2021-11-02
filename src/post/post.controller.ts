@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+} from '@nestjs/common';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { Post as Forum } from './post.schema';
@@ -24,5 +32,10 @@ export class PostController {
     @Body() updatePostDto: UpdatePostDto,
   ): Promise<Forum> {
     return this.postService.updatePost(id, updatePostDto);
+  }
+
+  @Delete('/:id')
+  deletePost(@Param('id') id: string): Promise<{ message: string }> {
+    return this.postService.deletePost(id);
   }
 }
