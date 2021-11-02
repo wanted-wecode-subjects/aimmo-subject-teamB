@@ -327,3 +327,362 @@ curl --location --request GET 'http://localhost:3000/posts?limit=5&offset=0&sear
     "message": "Unauthorized"
 }
 ```
+***
+
+### Comment(댓글)
+#### Create Comment (댓글 작성)
+- Method: POST
+- Endpoint: http://localhost:3000/comment
+- Header:
+  - Authorization(token): string (required)
+- Body:
+  - content: string (required)
+  - depth: number (required)
+  - postId: string (required)
+  - parentCommentId: string (optional)
+- Request
+  - 댓글 작성
+  ```
+  curl --location --request POST 'http://localhost:3000/comment' \
+  --header 'content-type: application/json' \
+  --header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5...' \
+  --data-raw '{
+      "content": "댓글",
+      "depth": 0,
+      "postId": "postId"
+  }'
+  ```
+  - 대댓글 작성
+  ```
+  curl --location --request POST 'http://localhost:3000/comment' \
+  --header 'content-type: application/json' \
+  --header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5...' \
+  --data-raw '{
+      "content": "대댓글",
+      "depth": 1,
+      "postId": "postId",
+      "parentCommentId": "618176dfbf01ef0f96c163be"
+  }'
+  ```
+- Response
+```
+# 201(댓글 작성)
+{
+    "postId": "postId",
+    "updated_at": "2021-11-02T17:36:47.413Z",
+    "created_at": "2021-11-02T17:36:47.413Z",
+    "comments": [],
+    "depth": 0,
+    "author": "testuser",
+    "content": "댓글",
+    "_id": "618176dfbf01ef0f96c163be",
+    "__v": 0
+}
+
+# 201(대댓글 작성)
+{
+    "postId": "postId",
+    "updated_at": "2021-11-02T17:36:47.413Z",
+    "created_at": "2021-11-02T17:36:47.413Z",
+    "comments": [],
+    "parentCommentId": "618176dfbf01ef0f96c163be",
+    "depth": 1,
+    "author": "testuser",
+    "content": "대댓글",
+    "_id": "6181772fbf01ef0f96c163e2",
+    "__v": 0
+}
+
+# 400(잘못된 depth 입력시)
+{
+    "statusCode": 400,
+    "message": "child comment depth is wrong",
+    "error": "Bad Request"
+}
+
+# 400(잘못된 depth 입력시)
+{
+    "statusCode": 400,
+    "message": "comment depth is wrong",
+    "error": "Bad Request"
+}
+
+# 400(대댓글에 대댓글을 다는 경우)
+{
+    "statusCode": 400,
+    "message": "child comment depth is wrong",
+    "error": "Bad Request"
+}
+
+# 401(Bad Token)
+{
+    "statusCode": 401,
+    "message": "Unauthorized"
+}
+```
+***
+
+#### Get Comment (특정 댓글 조회)
+- Method: GET
+- Endpoint: http://localhost:3000/comment/:id
+- Header:
+  - Authorization(token): string (required)
+- Request
+```
+curl --location --request GET 'http://localhost:3000/comment/618176dfbf01ef0f96c163be' \
+--header 'content-type: application/json' \
+--header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5...'
+```
+- Response
+```
+# 200
+{
+    "_id": "618176dfbf01ef0f96c163be",
+    "postId": "postId",
+    "updated_at": "2021-11-02T17:35:27.933Z",
+    "created_at": "2021-11-02T17:35:27.933Z",
+    "comments": [
+        "61817725bf01ef0f96c163d2",
+        "61817728bf01ef0f96c163d8",
+        "6181772bbf01ef0f96c163dd",
+        "6181772fbf01ef0f96c163e2"
+    ],
+    "depth": 0,
+    "author": "testuser",
+    "content": "댓글2",
+    "__v": 4
+}
+
+# 401(Bad Token)
+{
+    "statusCode": 401,
+    "message": "Unauthorized"
+}
+
+# 404(존재하지 않는 comment 조회시)
+{
+    "statusCode": 404,
+    "message": "Not found comment",
+    "error": "Not Found"
+}
+```
+***
+
+#### Get Comments by parentCommentId (특정 댓글의 대댓글 목록 조회)
+- Method: GET
+- Endpoint: http://localhost:3000/comment/childComments
+- Header:
+  - Authorization(token): string (required)
+- Query:
+  - parentCommentId: string (required)
+  - limit: string (optional)
+  - offset: string (optional)
+- Request
+```
+curl --location --request GET 'http://localhost:3000/comment/childComments?parentCommentId=618176dfbf01ef0f96c163be&limit=5&offset=0' \
+--header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6...'
+```
+- Response
+```
+# 200
+{
+    "count": 2,
+    "comments": [
+        {
+            "_id": "61817725bf01ef0f96c163d2",
+            "postId": "postId",
+            "updated_at": "2021-11-02T17:36:37.806Z",
+            "created_at": "2021-11-02T17:36:37.806Z",
+            "comments": [],
+            "parentCommentId": "618176dfbf01ef0f96c163be",
+            "depth": 1,
+            "author": "testuser",
+            "content": "대댓글2-1",
+            "__v": 0
+        },
+        {
+            "_id": "61817728bf01ef0f96c163d8",
+            "postId": "postId",
+            "updated_at": "2021-11-02T17:36:40.907Z",
+            "created_at": "2021-11-02T17:36:40.907Z",
+            "comments": [],
+            "parentCommentId": "618176dfbf01ef0f96c163be",
+            "depth": 1,
+            "author": "testuser",
+            "content": "대댓글2-2",
+            "__v": 0
+        }
+    ]
+}
+
+# 401(Bad Token)
+{
+    "statusCode": 401,
+    "message": "Unauthorized"
+}
+```
+***
+
+
+#### Get Comments by postId (특정 게시글의 댓글 조회)
+- Method: GET
+- Endpoint: http://localhost:3000/comment
+- Header:
+  - Authorization(token): string (required)
+- Query:
+  - postId: string (required)
+  - limit: string (optional)
+  - offset: string (optional)
+- Request
+```
+curl --location --request GET 'http://localhost:3000/comment?postId=618176dfbf01ef0f96c163be&limit=5&offset=0' \
+--header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6...'
+```
+- Response
+```
+# 200
+{
+    "count": 2,
+    "comments": [
+        {
+            "_id": "618176d0bf01ef0f96c163bb",
+            "postId": "postId",
+            "updated_at": "2021-11-02T17:35:12.347Z",
+            "created_at": "2021-11-02T17:35:12.347Z",
+            "comments": [
+                "618176fabf01ef0f96c163c2",
+                "61817704bf01ef0f96c163c8",
+                "61817707bf01ef0f96c163cd"
+            ],
+            "depth": 0,
+            "author": "testuser",
+            "content": "댓글",
+            "__v": 3
+        },
+        {
+            "_id": "618176dfbf01ef0f96c163be",
+            "postId": "postId",
+            "updated_at": "2021-11-02T18:47:50.223Z",
+            "created_at": "2021-11-02T17:35:27.933Z",
+            "comments": [
+                "61817725bf01ef0f96c163d2",
+                "61817728bf01ef0f96c163d8",
+                "6181772bbf01ef0f96c163dd",
+                "6181772fbf01ef0f96c163e2"
+            ],
+            "depth": 0,
+            "author": "testuser",
+            "content": "update comment",
+            "__v": 4
+        }
+    ]
+}
+
+# 401(Bad Token)
+{
+    "statusCode": 401,
+    "message": "Unauthorized"
+}
+```
+***
+
+#### Update Comment (댓글 수정)
+- Method: PATCH
+- Endpoint: http://localhost:3000/comment/:id
+- Header:
+  - Authorization(token): string (required)
+- Body:
+  - content: string (required)
+- Request
+```
+curl --location --request PATCH 'localhost:3000/comment/618176dfbf01ef0f96c163be' \
+--header 'content-type: application/json' \
+--header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVC...' \
+--data-raw '{
+    "content": "update comment"
+}'
+```
+- Response
+```
+# 200
+{
+    "_id": "618176dfbf01ef0f96c163be",
+    "postId": "postId",
+    "updated_at": "2021-11-02T13:16:41.151Z",
+    "created_at": "2021-11-02T13:10:05.852Z",
+    "comments": [
+        "618138d92533ddb6ed480c65"
+    ],
+    "depth": 0,
+    "author": "testuser",
+    "content": "update comment",
+    "__v": 1
+}
+
+# 400
+{
+    "statusCode": 400,
+    "message": "Empty content",
+    "error": "Not Found"
+}
+
+# 401(Bad Token)
+{
+    "statusCode": 401,
+    "message": "Unauthorized"
+}
+
+# 401(Not author)
+{
+    "statusCode": 401,
+    "message": "Not comment's author",
+    "error": "Unauthorized"
+}
+
+# 404
+{
+    "statusCode": 404,
+    "message": "Not found comment",
+    "error": "Not Found"
+}
+```
+***
+
+#### Delete Comment (댓글 삭제)
+- Method: DELETE
+- Endpoint: http://localhost:3000/comment/:id
+- Header:
+  - Authorization(token): string (required)
+- Request
+```
+curl --location --request DELETE 'localhost:3000/comment/61811509a4c41562a16ea382' \
+--header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'
+```
+- Response
+```
+# 200
+{
+    "message": "comment deleted"
+}
+
+# 401(Bad Token)
+{
+    "statusCode": 401,
+    "message": "Unauthorized"
+}
+
+# 401(Not author)
+{
+    "statusCode": 401,
+    "message": "Not comment's author",
+    "error": "Unauthorized"
+}
+
+# 404
+{
+    "statusCode": 404,
+    "message": "Not found comment",
+    "error": "Not Found"
+}
+```
+***
