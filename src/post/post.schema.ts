@@ -19,8 +19,8 @@ export class Post {
   @Prop()
   category: PostCategories;
 
-  @Prop()
-  count: number;
+  @Prop(Number)
+  read_count: number;
 
   @Prop()
   read_user: string[];

@@ -19,7 +19,7 @@ export class PostService {
     createdPost.author = user.username;
     createdPost.created_at = new Date();
     createdPost.updated_at = new Date();
-    createdPost.count = 1;
+    createdPost.read_count = 1;
     createdPost.user = user;
     createdPost.read_user.push(user.username);
 
@@ -28,11 +28,19 @@ export class PostService {
     return result;
   }
 
-  async getPostById(id: string): Promise<Post> {
+  async getPostById(id: string, user: User): Promise<Post> {
     const post = await this.postModel.findById(id).exec();
 
     if (!post) {
       throw new NotFoundException(`Post with ID "${id}" not found`);
+    }
+
+    console.log(post);
+    console.log(post.read_count);
+    if (!post.read_user.includes(user.username)) {
+      post.read_user.push(user.username);
+      post.read_count += 1;
+      await post.save();
     }
 
     return post;
