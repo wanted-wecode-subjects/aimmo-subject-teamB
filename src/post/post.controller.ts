@@ -6,7 +6,11 @@ import {
   Param,
   Patch,
   Post,
+  UseGuards,
 } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
+import { GetUser } from '../auth/get-user.decorator';
+import { User } from '../auth/user.schema';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { Post as Forum } from './post.schema';
@@ -17,8 +21,12 @@ export class PostController {
   constructor(private postService: PostService) {}
 
   @Post()
-  createPost(@Body() createPostDto: CreatePostDto): Promise<Forum> {
-    return this.postService.createPost(createPostDto);
+  @UseGuards(AuthGuard())
+  createPost(
+    @Body() createPostDto: CreatePostDto,
+    @GetUser() user: User,
+  ): Promise<Forum> {
+    return this.postService.createPost(createPostDto, user);
   }
 
   @Get('/:id')
@@ -27,15 +35,21 @@ export class PostController {
   }
 
   @Patch('/:id')
+  @UseGuards(AuthGuard())
   updatePost(
     @Param('id') id: string,
     @Body() updatePostDto: UpdatePostDto,
+    @GetUser() user: User,
   ): Promise<Forum> {
-    return this.postService.updatePost(id, updatePostDto);
+    return this.postService.updatePost(id, updatePostDto, user);
   }
 
   @Delete('/:id')
-  deletePost(@Param('id') id: string): Promise<{ message: string }> {
-    return this.postService.deletePost(id);
+  @UseGuards(AuthGuard())
+  deletePost(
+    @Param('id') id: string,
+    @GetUser() user: User,
+  ): Promise<{ message: string }> {
+    return this.postService.deletePost(id, user);
   }
 }
