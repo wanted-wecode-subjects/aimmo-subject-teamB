@@ -15,19 +15,28 @@ export class CommentController {
   create(@Body() createCommentDto: CreateCommentDto, @GetUser() user: User) {
     return this.commentService.create(createCommentDto, user);
   }
-
-  @Get(':id')
-  findById(@Param('id') id: string) {
-    return this.commentService.findById(id);
-  }
-
-  @Get()
+  
+  @Get('/childComments')
   findByParentCommentId(
     @Query('parentCommentId') parentCommentId: string,
     @Query('limit') limit: string,
     @Query('offset') offset: string,
   ) {
     return this.commentService.findByParentCommentId(parentCommentId, +limit, +offset);
+  }
+    
+  @Get(':id')
+  findById(@Param('id') id: string) {
+    return this.commentService.findById(id);
+  }
+    
+  @Get()
+  findByPostId(
+    @Query('postId') postId: string,
+    @Query('limit') limit: string,
+    @Query('offset') offset: string,
+  ) {
+    return this.commentService.findByPostId(postId, +limit, +offset);
   }
 
   @Patch(':id')
