@@ -48,7 +48,20 @@ export class CommentService {
     return await existedComment.save();
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} comment`;
+  async remove(id: string, user: User) {
+    const existedComment = await this.findById(id);
+    if (existedComment.author !== user.username) {
+      throw new UnauthorizedException(`Not comment's author`);
+    }
+
+    if (existedComment.comments.length === 0) {
+      // 대댓글이 없는 경우
+      await existedComment.delete();
+    } else {
+      // 대댓글이 있는 경우
+      existedComment.content = '삭제된 댓글입니다.';
+      await existedComment.save();
+    }
+    return { message: 'comment deleted' };
   }
 }
