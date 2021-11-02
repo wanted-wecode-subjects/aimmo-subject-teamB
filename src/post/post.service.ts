@@ -7,6 +7,7 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { User } from '../auth/user.schema';
 import { CreatePostDto } from './dto/create-post.dto';
+import { GetPostsFilterDto } from './dto/get-posts-filter.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { Post, PostDocument } from './post.schema';
 
@@ -28,6 +29,37 @@ export class PostService {
     return result;
   }
 
+  async getPosts(
+    filterDto: GetPostsFilterDto,
+  ): Promise<{ count: number; data: Post[] }> {
+    const { limit, offset, search } = filterDto;
+    const query = this.postModel.find();
+
+    if (limit) {
+      query.limit(Number(limit));
+    }
+
+    if (offset) {
+      query.skip(Number(offset));
+    }
+
+    if (search) {
+      query.find({
+        $or: [
+          { title: new RegExp(search, 'i') }, //For substring search, case insensitive
+          { content: new RegExp(search, 'i') },
+          { author: new RegExp(search, 'i') },
+        ],
+      });
+    }
+
+    const posts = await query.find();
+    return {
+      count: posts.length,
+      data: [...posts],
+    };
+  }
+
   async getPostById(id: string, user: User): Promise<Post> {
     const post = await this.postModel.findById(id).exec();
 
@@ -35,8 +67,6 @@ export class PostService {
       throw new NotFoundException(`Post with ID "${id}" not found`);
     }
 
-    console.log(post);
-    console.log(post.read_count);
     if (!post.read_user.includes(user.username)) {
       post.read_user.push(user.username);
       post.read_count += 1;
