@@ -21,12 +21,9 @@ export class CommentService {
     return await createdComment.save();
   }
 
-  findAll() {
-    return `This action returns all comment`;
-  }
-
-  findOne(id: number) {
-    return `This action returns a #${id} comment`;
+  async findOne(id: string) {
+    const existedComment = await this.commentModel.findById(id);
+    return existedComment;
   }
 
   update(id: number, updateCommentDto: UpdateCommentDto) {

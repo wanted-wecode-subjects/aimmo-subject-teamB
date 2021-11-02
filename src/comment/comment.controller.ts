@@ -16,14 +16,9 @@ export class CommentController {
     return this.commentService.create(createCommentDto, user);
   }
 
-  @Get()
-  findAll() {
-    return this.commentService.findAll();
-  }
-
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.commentService.findOne(+id);
+    return this.commentService.findOne(id);
   }
 
   @Patch(':id')
