@@ -19,7 +19,7 @@ export class Post {
   @Prop()
   category: PostCategories;
 
-  @Prop()
+  @Prop(Number)
   read_count: number;
 
   @Prop()
