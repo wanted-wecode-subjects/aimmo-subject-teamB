@@ -6,36 +6,57 @@ import {
   Param,
   Patch,
   Post,
+  Query,
+  UseGuards,
 } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
+import { GetUser } from '../auth/get-user.decorator';
+import { User } from '../auth/user.schema';
 import { CreatePostDto } from './dto/create-post.dto';
+import { GetPostsFilterDto } from './dto/get-posts-filter.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
 import { Post as Forum } from './post.schema';
 import { PostService } from './post.service';
 
 @Controller('posts')
+@UseGuards(AuthGuard())
 export class PostController {
   constructor(private postService: PostService) {}
 
   @Post()
-  createPost(@Body() createPostDto: CreatePostDto): Promise<Forum> {
-    return this.postService.createPost(createPostDto);
+  createPost(
+    @Body() createPostDto: CreatePostDto,
+    @GetUser() user: User,
+  ): Promise<Forum> {
+    return this.postService.createPost(createPostDto, user);
+  }
+
+  @Get()
+  getPosts(
+    @Query() filterDto: GetPostsFilterDto,
+  ): Promise<{ count: number; data: Forum[] }> {
+    return this.postService.getPosts(filterDto);
   }
 
   @Get('/:id')
-  getPostById(@Param('id') id: string): Promise<Forum> {
-    return this.postService.getPostById(id);
+  getPostById(@Param('id') id: string, @GetUser() user: User): Promise<Forum> {
+    return this.postService.getPostById(id, user);
   }
 
   @Patch('/:id')
   updatePost(
     @Param('id') id: string,
     @Body() updatePostDto: UpdatePostDto,
+    @GetUser() user: User,
   ): Promise<Forum> {
-    return this.postService.updatePost(id, updatePostDto);
+    return this.postService.updatePost(id, updatePostDto, user);
   }
 
   @Delete('/:id')
-  deletePost(@Param('id') id: string): Promise<{ message: string }> {
-    return this.postService.deletePost(id);
+  deletePost(
+    @Param('id') id: string,
+    @GetUser() user: User,
+  ): Promise<{ message: string }> {
+    return this.postService.deletePost(id, user);
   }
 }

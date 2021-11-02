@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import * as mongoose from 'mongoose';
+import { User } from '../auth/user.schema';
 import { PostCategories } from './post-categories.enum';
 
 export type PostDocument = Post & mongoose.Document;
@@ -18,8 +19,8 @@ export class Post {
   @Prop()
   category: PostCategories;
 
-  @Prop()
-  count: number;
+  @Prop(Number)
+  read_count: number;
 
   @Prop()
   read_user: string[];
@@ -29,6 +30,9 @@ export class Post {
 
   @Prop()
   updated_at: Date;
+
+  @Prop({ type: mongoose.Schema.Types.ObjectId, ref: 'User' })
+  user: User;
 }
 
 export const PostSchema = SchemaFactory.createForClass(Post);
