@@ -1,5 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import * as mongoose from 'mongoose';
+import { PostCategories } from './post-categories.enum';
 
 export type PostDocument = Post & mongoose.Document;
 
@@ -15,7 +16,13 @@ export class Post {
   author: string;
 
   @Prop()
-  category: string;
+  category: PostCategories;
+
+  @Prop()
+  count: number;
+
+  @Prop()
+  read_user: string[];
 
   @Prop()
   created_at: Date;
