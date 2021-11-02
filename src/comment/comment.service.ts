@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable, UnauthorizedException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { User } from 'src/auth/user.schema';
@@ -26,8 +26,23 @@ export class CommentService {
     return existedComment;
   }
 
-  update(id: number, updateCommentDto: UpdateCommentDto) {
-    return `This action updates a #${id} comment`;
+  async update(
+    id: string,
+    updateCommentDto: UpdateCommentDto,
+    user: User
+  ) {
+    const existedComment = await this.findOne(id);
+    if (existedComment.author !== user.username) {
+      throw new UnauthorizedException(`Not comment's author`);
+    }
+
+    const { content } = updateCommentDto;
+    if (!content) {
+      throw new BadRequestException('Empty content');
+    }
+    existedComment.content = content;
+    existedComment.updated_at = new Date();
+    return await existedComment.save();
   }
 
   remove(id: number) {

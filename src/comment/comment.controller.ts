@@ -22,8 +22,12 @@ export class CommentController {
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateCommentDto: UpdateCommentDto) {
-    return this.commentService.update(+id, updateCommentDto);
+  update(
+    @Param('id') id: string,
+    @Body() updateCommentDto: UpdateCommentDto,
+    @GetUser() user: User
+  ) {
+    return this.commentService.update(id, updateCommentDto, user);
   }
 
   @Delete(':id')
