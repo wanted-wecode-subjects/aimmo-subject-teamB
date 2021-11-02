@@ -53,6 +53,17 @@ export class CommentService {
     return existedComment;
   }
 
+  async findByPostId(postId: string, limit: number, offset: number) {
+    limit = isNaN(limit) ? 10: limit;
+    offset = isNaN(offset) ? 0 : offset;
+    const comments = await this.commentModel
+      .find({ postId, depth: 0 })
+      .skip(offset)
+      .limit(limit)
+      .sort({'created_at': 0});
+    return {count: comments.length, comments};
+  }
+
   async update(
     id: string,
     updateCommentDto: UpdateCommentDto,
