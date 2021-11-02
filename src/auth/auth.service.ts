@@ -13,19 +13,24 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async createUser(userCredentialsDto: UserCredentialsDto): Promise<User> {
+  async createUser(userCredentialsDto: UserCredentialsDto): Promise<{ access_token: string }> {
     const { username, password } = userCredentialsDto;
     const salt = await bcrypt.genSalt();
     const hashedPassword = await bcrypt.hash(password, salt);
     const createdUser = new this.userModel({ username, password: hashedPassword });
-    return await createdUser.save();
+    await createdUser.save();
+    return this.logIn(userCredentialsDto);
   }
 
-  async logIn(userCredentialsDto: UserCredentialsDto): Promise<User> {
-    const existedUser = await this.userModel.findOne(userCredentialsDto);
-    if (!existedUser) {
-      throw new NotFoundException('User not found');
+  async logIn(userCredentialsDto: UserCredentialsDto): Promise<{ access_token: string }> {
+    const { username, password } = userCredentialsDto;
+    const existedUser = await this.userModel.findOne({ username });
+    if (existedUser && (await bcrypt.compare(password, existedUser.password))) {
+      const payload = { username };
+      const token = { access_token: this.jwtService.sign(payload)};
+      return token;
+    } else {
+      throw new NotFoundException('User not found');      
     }
-    return existedUser;
   }
 }
