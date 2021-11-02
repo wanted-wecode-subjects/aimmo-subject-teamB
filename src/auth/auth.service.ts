@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { ConflictException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
@@ -18,7 +18,15 @@ export class AuthService {
     const salt = await bcrypt.genSalt();
     const hashedPassword = await bcrypt.hash(password, salt);
     const createdUser = new this.userModel({ username, password: hashedPassword });
-    await createdUser.save();
+    try {
+      await createdUser.save();
+    } catch (e) {
+      if (e.code === 11000) { // E11000 duplicate key error
+        throw new ConflictException('Username already exists');
+      } else {
+        throw new InternalServerErrorException();
+      }
+    }
     return this.logIn(userCredentialsDto);
   }
 
