@@ -38,6 +38,25 @@
   - class-validator
   - class-transformer
 
+## 구현 방법
+### 대댓글 pagination
+- limit은 find의 limit()에 인자로 넣어 호출할 경우, 해당 값만큼의 데이터를 가져오기 때문에 API의 QueryParameter로 가져와서 사용하였습니다. 또한, limit이 생략된 경우, 기본값으로 10이라는 값을 줄 수 있도록 구현하였습니다.
+- offset은 find의 skip()에 인자로 넣어 호출할 경우, 해당 값만큼 데이터를 건너 뛰고 그 다음의 데이터부터 가져오기 때문에 API의 QueryParameter로 가져와서 사용하였습니다. 또한, offset이 생략된 경우, 기본값으로 0이라는 값을 줄 수 있도록 구현하였습니다.
+- sort() 메소드를 사용하여 댓글이 생성된 시간 순으로 정렬할 수 있도록 하였습니다.
+
+```ts
+  async findByParentCommentId(parentCommentId: string, limit: number, offset: number) {
+    limit = isNaN(limit) ? 10: limit;
+    offset = isNaN(offset) ? 0 : offset;
+    const comments = await this.commentModel
+      .find({ parentCommentId, depth: 1 })
+      .skip(offset)
+      .limit(limit)
+      .sort({'created_at': 1});
+    return {count: comments.length, comments};
+  }
+```
+
 ## API Endpoint
 ### User(유저)
 #### Register (유저생성 or 회원가입)
