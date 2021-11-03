@@ -56,6 +56,47 @@
     return {count: comments.length, comments};
   }
 ```
+### 게시글 카테고리
+게시글 카테고리 구현을 위해서 post(게시글) 테이블 스키마에 category라는
+attribute를 작성하였습니다. category에 들어갈 값들을 enum 값으로 정의하여
+type check가 가능하도록 구현하였습니다.
+```ts
+export enum PostCategories {
+  GREETINGS = 'GREETINGS',
+  RANDOM = 'RANDOM',
+  DAILY = 'DAILY',
+}
+```
+### 게시글 검색
+게시글 검색을 하려면 전체 게시글들을 조회하는 api에서 query로 search 값을 줘서
+게시글의 제목, 내용, 작성자 기준으로 검색이 가능하도록 구현하였습니다.
+```ts
+if (search) {
+      query.find({
+        $or: [
+          { title: new RegExp(search, 'i') }, //For substring search, case insensitive
+          { content: new RegExp(search, 'i') },
+          { author: new RegExp(search, 'i') },
+        ],
+      });
+    }
+```
+### 게시글 읽힘 수
+같은 User가 게시글을 읽는 경우 count 수가 증가하지 못하게 하려면 게시글에
+어떤 User들이 게시글을 조회하였는지 알아야 하므로 post(게시글) 테이블
+스키마에 유저들의 username을 배열에 저장하는 read_user라는 attribute를
+작성하였습니다. username은 중복되지 않는 고유의 값으로 정의했기 때문에
+username을 저장하기로 했습니다. 유저가 게시글을 조회할 때 게시글의 read_user
+에 자신의 username이 없으면 username을 추가하고 read_count(조회 수)를
+하나 올리도록 구현하였습니다. 따라서 같은 User가 게시글을 다시 읽는 경우
+조회 후 가 증가하지 못하도록 하였습니다.
+```ts
+if (!post.read_user.includes(user.username)) {
+      post.read_user.push(user.username);
+      post.read_count += 1;
+      await post.save();
+    }
+```
 
 ## API Endpoint
 ### User(유저)
