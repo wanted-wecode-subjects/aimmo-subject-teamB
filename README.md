@@ -98,11 +98,14 @@ if (!post.read_user.includes(user.username)) {
     }
 ```
 
+## 배포 서버 주소
+- http://ec2-18-118-24-209.us-east-2.compute.amazonaws.com:3000/
+
 ## API Endpoint
 ### User(유저)
 #### Register (유저생성 or 회원가입)
 - Method: POST
-- Endpoint: http://localhost:3000/auth/register
+- Endpoint: http://ec2-18-118-24-209.us-east-2.compute.amazonaws.com:3000/auth/register
 - Body:
   - username: string (required)
     - (Min 4 & Max 20 letters)
@@ -135,7 +138,7 @@ curl --location --request POST 'http://localhost:3000/auth/register' \
 
 #### Log In (로그인)
 - Method: POST
-- Endpoint: http://localhost:3000/auth/login
+- Endpoint: http://ec2-18-118-24-209.us-east-2.compute.amazonaws.com:3000/auth/login
 - Body:
   - username: string (required)
   - password: string (required)
@@ -166,7 +169,7 @@ curl --location --request POST 'http://localhost:3000/auth/login' \
 ### Post(게시물)
 #### Create Post (글 작성)
 - Method: POST
-- Endpoint: http://localhost:3000/posts
+- Endpoint: http://ec2-18-118-24-209.us-east-2.compute.amazonaws.com:3000/posts
 - Header:
   - Authorization(token): string (required)
 - Body:
@@ -217,7 +220,7 @@ curl --location --request POST 'http://localhost:3000/posts' \
 
 #### Update Post (글 수정)
 - Method: PATCH
-- Endpoint: http://localhost:3000/posts/:id
+- Endpoint: http://ec2-18-118-24-209.us-east-2.compute.amazonaws.com:3000/posts/:id
 - Header:
   - Authorization(token): string (required)
 - Param:
@@ -277,7 +280,7 @@ curl --location --request PATCH 'http://localhost:3000/posts/61816d414f445cab0f4
 
 #### Delete Post (글 삭제)
 - Method: DELETE
-- Endpoint: http://localhost:3000/posts/:id
+- Endpoint: http://ec2-18-118-24-209.us-east-2.compute.amazonaws.com:3000/posts/:id
 - Header:
   - Authorization(token): string (required)
 - Param:
@@ -311,7 +314,7 @@ curl --location --request DELETE 'http://localhost:3000/posts/61816d414f445cab0f
 
 #### Get A Post by ID (아이디로 글 하나 읽기)
 - Method: GET
-- Endpoint: http://localhost:3000/posts/:id
+- Endpoint: http://ec2-18-118-24-209.us-east-2.compute.amazonaws.com:3000/posts/:id
 - Header:
   - Authorization(token): string (required)
 - Param:
@@ -358,7 +361,7 @@ curl --location --request GET 'http://localhost:3000/posts/61816e3b4f445cab0f4c6
 
 #### Get All Posts (전체 글 일기)
 - Method: GET
-- Endpoint: http://localhost:3000/posts
+- Endpoint: http://ec2-18-118-24-209.us-east-2.compute.amazonaws.com:3000/posts
 - Header:
   - Authorization(token): string (required)
 - Query:
@@ -406,7 +409,7 @@ curl --location --request GET 'http://localhost:3000/posts?limit=5&offset=0&sear
 ### Comment(댓글)
 #### Create Comment (댓글 작성)
 - Method: POST
-- Endpoint: http://localhost:3000/comment
+- Endpoint: http://ec2-18-118-24-209.us-east-2.compute.amazonaws.com:3000/comment
 - Header:
   - Authorization(token): string (required)
 - Body:
@@ -498,7 +501,7 @@ curl --location --request GET 'http://localhost:3000/posts?limit=5&offset=0&sear
 
 #### Get Comment (특정 댓글 조회)
 - Method: GET
-- Endpoint: http://localhost:3000/comment/:id
+- Endpoint: http://ec2-18-118-24-209.us-east-2.compute.amazonaws.com:3000/comment/:id
 - Header:
   - Authorization(token): string (required)
 - Request
@@ -544,7 +547,7 @@ curl --location --request GET 'http://localhost:3000/comment/618176dfbf01ef0f96c
 
 #### Get Comments by parentCommentId (특정 댓글의 대댓글 목록 조회)
 - Method: GET
-- Endpoint: http://localhost:3000/comment/childComments
+- Endpoint: http://ec2-18-118-24-209.us-east-2.compute.amazonaws.com:3000/comment/childComments
 - Header:
   - Authorization(token): string (required)
 - Query:
@@ -600,7 +603,7 @@ curl --location --request GET 'http://localhost:3000/comment/childComments?paren
 
 #### Get Comments by postId (특정 게시글의 댓글 조회)
 - Method: GET
-- Endpoint: http://localhost:3000/comment
+- Endpoint: http://ec2-18-118-24-209.us-east-2.compute.amazonaws.com:3000/comment
 - Header:
   - Authorization(token): string (required)
 - Query:
@@ -662,7 +665,7 @@ curl --location --request GET 'http://localhost:3000/comment?postId=618176dfbf01
 
 #### Update Comment (댓글 수정)
 - Method: PATCH
-- Endpoint: http://localhost:3000/comment/:id
+- Endpoint: http://ec2-18-118-24-209.us-east-2.compute.amazonaws.com:3000/comment/:id
 - Header:
   - Authorization(token): string (required)
 - Body:
@@ -724,7 +727,7 @@ curl --location --request PATCH 'localhost:3000/comment/618176dfbf01ef0f96c163be
 
 #### Delete Comment (댓글 삭제)
 - Method: DELETE
-- Endpoint: http://localhost:3000/comment/:id
+- Endpoint: http://ec2-18-118-24-209.us-east-2.compute.amazonaws.com:3000/comment/:id
 - Header:
   - Authorization(token): string (required)
 - Request
